@@ -21,8 +21,11 @@ Or install it yourself as:
 ## Usage
 
 ```ruby
-# Authenticate your client
-client = HelpscoutApi::Client.new(api_token: YOUR_API_TOKEN)
+# Set your api_token
+HelpscoutApi::Client.api_token = YOUR_API_TOKEN
+
+# Create your client
+client = HelpscoutApi::Client.new()
 
 # List resources
 client.<resource>.list(<params>)

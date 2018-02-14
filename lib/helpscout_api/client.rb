@@ -2,20 +2,25 @@ require 'httparty'
 
 module HelpscoutApi
 
-  HEADERS = { "Content-Type" => "application/json" }
-  API_VERSION = "v1"
-
   class Client
-
     include HTTParty
     format :json
-    attr_accessor :api_token, :auth_params
+
+    HEADERS = { "Content-Type" => "application/json" }
+    API_VERSION  = "v1"
+
     headers HEADERS
     base_uri "https://api.helpscout.net/#{API_VERSION}/"
 
-    def initialize(api_token:)
-      @api_token = api_token
-      @auth_params = { username: api_token, password: "X" }
+    attr_accessor :auth_params
+
+    class << self
+      attr_accessor :api_token
+      @api_token = nil
+    end
+
+    def initialize
+      @auth_params = { username: self.class.api_token, password: "X" }
     end
 
     def list(**params)
@@ -58,7 +63,7 @@ module HelpscoutApi
       case response.code
       when 200..299
         response.parsed_response
-      when 403..404
+      when 400..404
         raise HTTParty::Error, response.parsed_response['error']
       when 500..600
         raise HTTParty::Error, response.parsed_response['error']
